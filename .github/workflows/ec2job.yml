@@ -1,0 +1,38 @@
+name: EC2 update
+on:
+  #workflow_run:
+   # workflows: [Autodeploy]
+    #types:
+     # - completed
+jobs:
+  build: 
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+
+      - name: AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with: 
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Update EC2
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.EC2_HOST }} 
+          username: ubuntu 
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script: |
+            docker compose down || true
+            docker rmi -f 529088265450.dkr.ecr.us-east-1.amazonaws.com/backend_rds
+            docker rmi -f 529088265450.dkr.ecr.us-east-1.amazonaws.com/backend_redis
+            docker pull 529088265450.dkr.ecr.us-east-1.amazonaws.com/backend_rds
+            docker pull 529088265450.dkr.ecr.us-east-1.amazonaws.com/backend_redis
+            docker compose up
+            
