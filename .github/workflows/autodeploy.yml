@@ -47,9 +47,8 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
             docker compose down || true
-            docker rmi -f 529088265450.dkr.ecr.us-east-1.amazonaws.com/backend_rds
-            docker rmi -f 529088265450.dkr.ecr.us-east-1.amazonaws.com/backend_redis
+            docker image prune -a
             docker pull 529088265450.dkr.ecr.us-east-1.amazonaws.com/backend_rds
             docker pull 529088265450.dkr.ecr.us-east-1.amazonaws.com/backend_redis
-            docker compose up 
+            docker compose up -d
 
