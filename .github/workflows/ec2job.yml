@@ -24,7 +24,7 @@ jobs:
 
       - name: Update EC2
         env: 
-          SHA: ${{ git.sha }} 
+          SHA: ${{ github.sha }} 
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.EC2_HOST }} 
