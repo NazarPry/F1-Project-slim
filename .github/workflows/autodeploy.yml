@@ -38,7 +38,7 @@ jobs:
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./backend_redis
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          
+
       - name: Update EC2
         uses: appleboy/ssh-action@v1.2.0
         with:
@@ -51,5 +51,5 @@ jobs:
             docker rmi -f 529088265450.dkr.ecr.us-east-1.amazonaws.com/backend_redis
             docker pull 529088265450.dkr.ecr.us-east-1.amazonaws.com/backend_rds
             docker pull 529088265450.dkr.ecr.us-east-1.amazonaws.com/backend_redis
-            docker compose up
+            docker compose up 
 
