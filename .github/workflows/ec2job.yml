@@ -1,7 +1,7 @@
 name: EC2 update
 on:
   workflow_run:
-   workflows: [Autodeploy]
+    workflows: [Autodeploy]
     types:
       - completed
 jobs:
