@@ -22,7 +22,7 @@ jobs:
         env: 
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: backend_rds
-          IMAGE_TAG: latest
+          IMAGE_TAG: ${{ git.sha }}
         run: |
           echo "ECR_REGISTRY: $ECR_REGISTRY"
           echo "ECR_REPOSITORY: $ECR_REPOSITORY"
@@ -34,21 +34,9 @@ jobs:
         env: 
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: backend_redis
-          IMAGE_TAG: latest
+          IMAGE_TAG: ${{ git.sha }}
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./backend_redis
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      - name: Update EC2
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.EC2_HOST }} 
-          username: ubuntu 
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          script: |
-            docker compose down || true
-            docker image prune -a
-            docker pull 529088265450.dkr.ecr.us-east-1.amazonaws.com/backend_rds
-            docker pull 529088265450.dkr.ecr.us-east-1.amazonaws.com/backend_redis
-            docker compose up -d
 
