@@ -1,5 +1,38 @@
 name: Autodeploy
 on: push
 jobs:
-  - name: Log aws
-    
+  build: 
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+
+      - name: AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with: 
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login ECR
+          id: login-ecr
+          uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag and push RDS
+        env: 
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: backend_rds
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./backend_rds
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+      - name: Build, tag and push Redis
+        env: 
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: backend_redis
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./backend_redis
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
