@@ -34,5 +34,5 @@ jobs:
             docker rmi -f 529088265450.dkr.ecr.us-east-1.amazonaws.com/backend_redis
             docker pull 529088265450.dkr.ecr.us-east-1.amazonaws.com/backend_rds
             docker pull 529088265450.dkr.ecr.us-east-1.amazonaws.com/backend_redis
-            docker compose up
+            docker compose up -d
             
